@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Image Hunter — 3000-image stress fixture</title></head>
+<body>
+  <h1>Stress page: 3000 image elements, 500 unique URLs</h1>
+  <div id="grid"></div>
+  <script>
+    // Renders in batches so the tab stays responsive.
+    const grid = document.getElementById('grid');
+    let i = 0;
+    function batch() {
+      const frag = document.createDocumentFragment();
+      for (let k = 0; k < 100 && i < 3000; k++, i++) {
+        const img = document.createElement('img');
+        img.src = `img/green.png?n=${i % 500}`; // 500 unique URLs
+        img.width = 60; img.height = 60;
+        img.loading = 'lazy';
+        frag.appendChild(img);
+      }
+      grid.appendChild(frag);
+      if (i < 3000) requestAnimationFrame(batch);
+    }
+    batch();
+  </script>
+</body>
+</html>

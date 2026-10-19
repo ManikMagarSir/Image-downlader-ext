@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+  <title>Image Hunter</title>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="mark" aria-hidden="true"><img src="icons/icon32.png" alt="" width="18" height="18"></span>
+      <span class="brand-name">Image Hunter</span>
+    </div>
+    <div class="top-actions">
+      <button id="btn-scan" class="btn btn-primary" title="Find images on the current page">Scan</button>
+      <button id="btn-deep" class="btn btn-ghost" title="Scrolls the page to load lazy and infinite-scroll images, then restores your position">Deep Scan</button>
+      <button id="btn-settings" class="btn btn-icon" title="Settings" aria-label="Settings">&#9881;</button>
+    </div>
+  </header>
+
+  <div id="progress" class="progress hidden" role="status" aria-live="polite">
+    <div id="progress-track" class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progress">
+      <div id="progress-bar" class="progress-fill"></div>
+    </div>
+    <span id="progress-text"></span>
+    <button id="btn-cancel" class="btn btn-small btn-danger hidden">Cancel</button>
+  </div>
+  <div id="banner" class="banner hidden" role="alert">
+    <span id="banner-text"></span>
+    <button id="btn-banner-close" class="banner-close" aria-label="Dismiss message">&times;</button>
+  </div>
+
+  <section class="controls" aria-label="Search and filters">
+    <div class="search-row">
+      <input id="search" type="search" placeholder="Search filename or URL" aria-label="Search images">
+      <button id="btn-filters" class="btn" aria-expanded="false" aria-controls="filters-panel">
+        Filters<span id="filter-badge" class="badge hidden">0</span>
+      </button>
+    </div>
+
+    <div class="control-row sort-row">
+      <label>Sort <select id="sort"></select></label>
+    </div>
+
+    <div id="filters-panel" class="filters-panel hidden">
+      <div class="filter-row">
+        <label>Type <select id="format">
+          <option value="">All types</option>
+          <option>JPEG</option><option>PNG</option><option>WebP</option><option>GIF</option>
+          <option>SVG</option><option>AVIF</option><option>BMP</option><option>ICO</option>
+          <option>TIFF</option><option>Other</option>
+        </select></label>
+        <label>Min W <input id="minw" type="number" min="0" step="10" aria-label="Minimum width"></label>
+        <label>Min H <input id="minh" type="number" min="0" step="10" aria-label="Minimum height"></label>
+      </div>
+      <div class="filter-row">
+        <label class="check"><input id="hide-tiny" type="checkbox"> Hide tiny</label>
+        <label class="check"><input id="hide-dupes" type="checkbox"> Collapse URL variants</label>
+        <span class="spacer"></span>
+        <button id="btn-reset-filters" class="btn btn-tiny">Reset filters</button>
+      </div>
+    </div>
+  </section>
+
+  <div id="selection-bar" class="selection-bar hidden">
+    <button id="btn-select-visible" class="btn btn-tiny">Select all visible</button>
+    <button id="btn-clear-selection" class="btn btn-tiny">Clear selection</button>
+    <span class="spacer"></span>
+    <span id="counts" class="counts" aria-live="polite">0 images</span>
+  </div>
+
+  <main id="gallery" class="gallery" tabindex="-1" aria-label="Image gallery">
+    <div id="empty" class="empty">No scan yet. Click <b>Scan</b> to find images on this page.</div>
+  </main>
+  <button id="btn-more" class="btn btn-more hidden" aria-controls="gallery">Show more</button>
+
+  <footer class="bottombar">
+    <button id="btn-download" class="btn btn-primary" disabled>Download selected</button>
+    <button id="btn-zip" class="btn btn-ghost" disabled>ZIP export</button>
+    <button id="btn-cancel-downloads" class="btn btn-small btn-danger hidden">Cancel</button>
+    <span id="download-status" class="dl-status" role="status" aria-live="polite"></span>
+  </footer>
+
+  <dialog id="dlg-settings" aria-labelledby="settings-title">
+    <h2 id="settings-title">Settings</h2>
+    <div class="form">
+      <label class="check"><input id="s-hide-tiny" type="checkbox"> Hide tiny images by default</label>
+      <label class="check"><input id="s-hide-dupes" type="checkbox"> Collapse URL variants by default</label>
+      <label>Default sort <select id="s-sort"></select></label>
+      <label class="check"><input id="s-use-folder" type="checkbox"> Save downloads into a subfolder</label>
+      <label id="folder-field">Subfolder name <input id="s-folder" type="text" placeholder="ImageHunter"></label>
+    </div>
+    <details class="advanced">
+      <summary>Advanced</summary>
+      <div class="form">
+        <label>Hide images smaller than
+          <span class="inline"><input id="s-minw" type="number" min="0"> &times; <input id="s-minh" type="number" min="0"> px</span>
+        </label>
+        <label>Deep Scan step delay (ms) <input id="s-delay" type="number" min="100" step="100"></label>
+        <label>Deep Scan max duration (ms) <input id="s-maxms" type="number" min="1000" step="1000"></label>
+      </div>
+    </details>
+    <h2>History</h2>
+    <div id="history" class="history"></div>
+    <menu>
+      <button id="s-reset" class="btn">Reset defaults</button>
+      <button id="s-clear-history" class="btn">Clear history</button>
+      <span class="spacer"></span>
+      <button id="s-close" class="btn btn-primary">Done</button>
+    </menu>
+  </dialog>
+
+  <dialog id="dlg-detail" aria-labelledby="detail-title"></dialog>
+
+  <script src="image-utils.js"></script>
+  <script src="settings.js"></script>
+  <script src="vendor/jszip.min.js"></script>
+  <script src="zip-export.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+# --- Dependencies ---
+node_modules/
+package-lock.json
+
+# --- Build / packaging artifacts ---
+*.crx
+*.pem
+*.zip
+!tests/fixtures/**/*.zip
+
+# --- Local dev / scratch ---
+_preview*.html
+*.local
+.env
+.env.*
+
+# --- Logs ---
+*.log
+npm-debug.log*
+
+# --- OS junk ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Editors ---
+.vscode/
+.idea/
+*.swp
+*~

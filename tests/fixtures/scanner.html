@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Image Hunter — Scanner Fixture</title>
+<style>
+  .cssbg { width: 200px; height: 120px; background-image: url('img/bg-tile.png'); }
+  .cssmulti { width: 100px; height: 100px; background: url("img/green.png") no-repeat; }
+  /* stylesheet-declared background, same origin */
+  #sheetbg { width: 150px; height: 150px; background-image: url('img/param.png'); }
+</style>
+</head>
+<body>
+  <h1>Scanner fixture</h1>
+
+  <h2>1. Standard images</h2>
+  <img src="img/small-red.png" alt="small">
+  <img src="img/large-blue.png" width="400" alt="displayed smaller than natural">
+
+  <h2>2. Responsive srcset and picture</h2>
+  <img src="img/large-blue.png" srcset="img/large-blue.png 800w, img/xlarge-blue.png 1600w" alt="srcset">
+  <picture>
+    <source srcset="img/xlarge-blue.png" type="image/png">
+    <img src="img/large-blue.png" alt="picture">
+  </picture>
+
+  <h2>3. Lazy-loaded images (attributes)</h2>
+  <img data-src="img/green.png" src="img/pixel.png" width="300" height="300" alt="data-src">
+  <img data-original="img/param.png" alt="data-original">
+  <img data-lazy-srcset="img/large-blue.png 800w" alt="data-lazy-srcset">
+
+  <h2>4. CSS backgrounds</h2>
+  <div class="cssbg">styled bg</div>
+  <div class="cssmulti">multi</div>
+  <div id="sheetbg">from stylesheet rule</div>
+  <div style="background-image:url('img/small-red.png');width:80px;height:40px">inline bg</div>
+
+  <h2>5. Duplicate URLs</h2>
+  <img src="img/large-blue.png" alt="dup1">
+  <img src="img/large-blue.png?v=2" alt="different query = different resource">
+  <img src="./img/large-blue.png" alt="dup2 relative same target">
+
+  <h2>6. Broken images</h2>
+  <img src="img/does-not-exist.png" alt="broken">
+  <img src="https://invalid.invalid/nope.jpg" alt="unreachable host">
+
+  <h2>7. Tracking pixels</h2>
+  <img src="img/pixel.png" width="1" height="1" alt="pixel">
+  <img src="img/pixel.png?k=2" width="1" height="1" alt="pixel2">
+
+  <h2>8. Query-parameter URLs</h2>
+  <img src="img/param.png?w=400&h=250&fit=crop&token=abc" alt="params">
+
+  <h2>9. Identical filenames, different paths</h2>
+  <img src="img/same-name.png" alt="a">
+  <img src="img/sub/same-name.png" alt="b">
+
+  <h2>10. Image links (gallery "open original" pattern)</h2>
+  <a href="img/xlarge-blue.png"><img src="img/large-blue.png" alt="thumb linking to bigger"></a>
+  <a href="img/green.png">not an image child, just a link</a>
+
+  <h2>11. Open shadow DOM</h2>
+  <div id="host"></div>
+  <script>
+    const host = document.getElementById('host');
+    const root = host.attachShadow({ mode: 'open' });
+    root.innerHTML = '<img src="img/large-blue.png?v=shadow" alt="inside shadow">'
+      + '<div style="background:url(img/small-red.png)">shadow bg (inline bg in shadow: known limitation)</div>';
+    host.textContent = 'shadow host mounted';
+  </script>
+
+  <h2>12. Dynamically inserted + scroll-loaded images (deep scan)</h2>
+  <div id="late" style="margin-top:250vh">scroll down</div>
+  <script>
+    // inserted after load
+    setTimeout(() => {
+      const img = document.createElement('img');
+      img.src = 'img/green.png?v=late';
+      img.alt = 'dynamic';
+      document.getElementById('late').appendChild(img);
+    }, 300);
+    // simulated infinite scroll: adds an image on each early scroll event
+    let scrollCount = 0;
+    addEventListener('scroll', () => {
+      if (scrollCount < 5 && window.scrollY > 200) {
+        scrollCount++;
+        const img = document.createElement('img');
+        img.src = `img/large-blue.png?scroll=${scrollCount}`;
+        img.alt = 'lazy scroll ' + scrollCount;
+        document.getElementById('late').appendChild(img);
+      }
+    });
+  </script>
+
+  <h2>13. Bulk page (open separately, see many-images.html)</h2>
+</body>
+</html>
